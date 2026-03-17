@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Google</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#fff;
+text-align:center;
+}
+
+/* TOP BAR */
+.topbar{
+background:#2d2d2d;
+height:30px;
+line-height:30px;
+font-size:13px;
+font-weight:bold;
+text-align:left;
+padding-left:10px;
+}
+
+.topbar a{
+color:#ccc;
+text-decoration:none;
+margin-right:16px;
+}
+
+.topbar a:hover{
+text-decoration:underline;
+}
+
+/* SIGN IN */
+.signin-wrap{
+position:absolute;
+top:38px;
+right:20px;
+}
+
+.signin{
+background:linear-gradient(#dd4b39,#d14836);
+color:white;
+border:1px solid #b0281a;
+padding:6px 14px;
+font-size:13px;
+cursor:pointer;
+border-radius:2px;
+}
+
+/* CONTENT LOWER */
+.content{
+margin-top:150px; /* NIŽE */
+}
+
+/* LOGO */
+.logo img{
+width:320px;
+}
+
+/* SEARCH */
+.searchbox{
+margin-top:12px;
+position:relative;
+}
+
+.searchbox input{
+width:600px; /* MALO KRAĆI */
+height:24px;
+font-size:15px;
+border:1px solid #d9d9d9;
+padding:3px 8px;
+outline:none;
+box-shadow:
+inset 0 1px 2px rgba(0,0,0,0.1),
+0 1px 0 rgba(255,255,255,0.8);
+}
+
+.searchbox input:focus{
+border-color:#4d90fe;
+box-shadow:
+inset 0 1px 2px rgba(0,0,0,0.1),
+0 0 3px rgba(77,144,254,0.5);
+}
+
+/* SUGGESTIONS */
+.suggestions{
+width:612px;
+margin:0 auto;
+border:1px solid #ccc;
+border-top:none;
+display:none;
+text-align:left;
+background:white;
+box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+
+.suggestions div{
+padding:6px 8px;
+cursor:pointer;
+font-size:14px;
+}
+
+.suggestions div.active{
+background:#eee;
+}
+
+.suggestions b{
+font-weight:bold;
+}
+
+/* BUTTONS */
+.buttons{
+margin-top:18px;
+}
+
+button{
+background:linear-gradient(#f5f5f5,#f1f1f1);
+border:1px solid #dcdcdc;
+padding:6px 12px;
+margin:3px;
+cursor:pointer;
+border-radius:2px;
+}
+
+/* FOOTER */
+.footer{
+position:fixed;
+bottom:10px;
+right:20px;
+font-size:12px;
+color:#666;
+}
+
+.footer a{
+color:#666;
+text-decoration:none;
+margin-left:15px;
+}
+
+.footer a:hover{
+text-decoration:underline;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+<a href="https://myaccount.google.com/">+You</a>
+<a href="https://www.google.com">Search</a>
+<a href="https://images.google.com">Images</a>
+<a href="https://maps.google.com">Maps</a>
+<a href="https://play.google.com">Play</a>
+<a href="https://www.youtube.com">YouTube</a>
+<a href="https://news.google.com">News</a>
+<a href="https://mail.google.com">Gmail</a>
+<a href="https://drive.google.com">Drive</a>
+<a href="https://calendar.google.com">Calendar</a>
+<a href="https://www.google.com/intl/en/about/products/">More</a>
+</div>
+
+<div class="signin-wrap">
+<button class="signin" onclick="window.open('https://accounts.google.com')">
+SIGN IN
+</button>
+</div>
+
+<div class="content">
+
+<div class="logo">
+<img src="https://wiki.archiveteam.org/images/archive/4/40/20141208003700%21Google_Logo.png">
+</div>
+
+<form action="https://www.google.com/search">
+<div class="searchbox">
+<input type="text" id="search" name="q" autocomplete="off">
+<div class="suggestions" id="suggestions"></div>
+</div>
+
+<div class="buttons">
+<button type="submit">Google Search</button>
+<button type="submit" name="btnI">I'm Feeling Lucky</button>
+</div>
+</form>
+
+</div>
+
+<div class="footer">
+<a href="https://www.google.com/ads/">Advertising Program</a>
+<a href="https://www.google.com/services/">Business Solutions</a>
+<a href="https://policies.google.com/privacy">Privacy & Terms</a>
+<a href="https://about.google/">About Google</a>
+</div>
+
+<script>
+let input = document.getElementById("search");
+let box = document.getElementById("suggestions");
+let selected = -1;
+let suggestions = [];
+
+function highlight(text, query){
+let i = text.toLowerCase().indexOf(query.toLowerCase());
+if(i === -1) return text;
+return text.substring(0,i) +
+"<b>" + text.substring(i, i+query.length) + "</b>" +
+text.substring(i+query.length);
+}
+
+input.addEventListener("input", function(){
+let q = input.value;
+
+if(q.length === 0){
+box.style.display="none";
+return;
+}
+
+fetch("https://suggestqueries.google.com/complete/search?client=firefox&q=" + q)
+.then(r=>r.json())
+.then(data=>{
+suggestions = data[1];
+selected = -1;
+box.innerHTML="";
+
+suggestions.forEach((s,i)=>{
+let div = document.createElement("div");
+div.innerHTML = highlight(s, q);
+
+div.onclick = ()=>{
+input.value = s;
+box.style.display="none";
+};
+
+box.appendChild(div);
+});
+
+box.style.display="block";
+});
+});
+
+input.addEventListener("keydown", function(e){
+let items = box.getElementsByTagName("div");
+
+if(e.key === "ArrowDown"){
+selected++;
+if(selected >= items.length) selected = 0;
+update();
+e.preventDefault();
+}
+
+if(e.key === "ArrowUp"){
+selected--;
+if(selected < 0) selected = items.length-1;
+update();
+e.preventDefault();
+}
+
+if(e.key === "Enter" && selected >= 0){
+input.value = suggestions[selected];
+box.style.display="none";
+}
+});
+
+function update(){
+let items = box.getElementsByTagName("div");
+for(let i=0;i<items.length;i++){
+items[i].classList.remove("active");
+}
+if(selected >= 0){
+items[selected].classList.add("active");
+input.value = suggestions[selected];
+}
+}
+</script>
+
+</body>
+</html>
