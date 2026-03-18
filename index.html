@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 
+<meta charset="UTF-8">
 <title>Old Google (Unofficial)</title>
 
-<meta name="description" content="Unofficial fan-made recreation of old Google interface. Not affiliated with Google.">
+<meta name="description" content="Unofficial fan-made recreation of old Google interface.">
 
 <link rel="icon" href="/OldGoogle/favicon.ico?v=3">
-
-<style>
-/* (OSTAJE TVOJ CSS, ništa ne diraj) */
 
 <style>
 body{
@@ -41,12 +38,9 @@ margin-right:16px;
 text-decoration:underline;
 }
 
-
-
-
 /* CONTENT LOWER */
 .content{
-margin-top:150px; /* NIŽE */
+margin-top:170px;
 }
 
 /* LOGO */
@@ -61,7 +55,7 @@ position:relative;
 }
 
 .searchbox input{
-width:600px; /* MALO KRAĆI */
+width:600px;
 height:24px;
 font-size:15px;
 border:1px solid #d9d9d9;
@@ -141,49 +135,66 @@ text-decoration:underline;
 
 </head>
 
-<>
+<body>
 
-<div class="topbar">
-<a href="https://ikzajednica.bspot.com/">+You</a>
-<a href="https://www.google.com">Search</a>
-<a href="https://images.google.com">Images</a>
-<a href="https://maps.google.com">Maps</a>
-<a href="https://play.google.com">Play</a>
-<a href="https://www.youtube.com">YouTube</a>
-<a href="https://news.google.com">News</a>
-<a href="https://mail.google.com">Gmail</a>
-<a href="https://drive.google.com">Drive</a>
-<a href="https://calendar.google.com">Calendar</a>
-<a href="https://www.google.com/intl/en/about/products/">More</a>
+<!-- DISKRETAN DISCLAIMER (NE KVARI IZGLED) -->
+<div style="
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+font-size: 10px;
+color: #aaa;
+text-align: center;
+font-family: Arial, sans-serif;
+z-index: 9999;
+pointer-events: none;
+">
+Unofficial recreation
 </div>
 
-
+<div class="topbar">
+<a href="#">+You</a>
+<a href="#">Search</a>
+<a href="#">Images</a>
+<a href="#">Maps</a>
+<a href="#">Play</a>
+<a href="#">YouTube</a>
+<a href="#">News</a>
+<a href="#">Gmail</a>
+<a href="#">Drive</a>
+<a href="#">Calendar</a>
+<a href="#">More</a>
+</div>
 
 <div class="content">
 
 <div class="logo">
 <img src="Google.png">
+<div style="font-size:11px; color:#777; margin-top:4px;">
+Unofficial
+</div>
 </div>
 
-<form action="https://www.google.com/search">
+<form onsubmit="searchGoogle(); return false;">
 <div class="searchbox">
-<input type="text" id="search" name="q" autocomplete="off">
+<input type="text" id="search" autocomplete="off">
 <div class="suggestions" id="suggestions"></div>
 </div>
 
 <div class="buttons">
 <button type="submit">Google Search</button>
-<button type="submit" name="btnI">I'm Feeling Lucky</button>
+<button type="button" onclick="lucky()">I'm Feeling Lucky</button>
 </div>
 </form>
 
 </div>
 
 <div class="footer">
-<a href="https://www.google.com/ads/">Advertising Program</a>
-<a href="https://www.google.com/services/">Business Solutions</a>
-<a href="https://policies.google.com/privacy">Privacy & Terms</a>
-<a href="https://about.google/">About Google</a>
+<a href="#">Advertising Program</a>
+<a href="#">Business Solutions</a>
+<a href="#">Privacy & Terms</a>
+<a href="#">About</a>
 </div>
 
 <script>
@@ -264,22 +275,22 @@ items[selected].classList.add("active");
 input.value = suggestions[selected];
 }
 }
+
+/* SAFE SEARCH (NE PHISHING) */
+function searchGoogle(){
+let q = input.value;
+if(q.trim() !== ""){
+window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+}
+}
+
+function lucky(){
+let q = input.value;
+if(q.trim() !== ""){
+window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&btnI=1";
+}
+}
 </script>
 
 </body>
-<div style="
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-background: #f5f5f5;
-color: #777;
-font-size: 11px;
-text-align: center;
-padding: 2px 0;
-z-index: 9999;
-font-family: Arial, sans-serif;
-pointer-events: none;
-">
-Unofficial Google UI recreation
-</div>
+</html>
